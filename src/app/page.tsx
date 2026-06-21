@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { useCurrent } from "@/features/auth/api/use-current";
 
 export default function Home() {
+  //const { data } = useCurrent();
   return (
     <div>
       <Button variant="primary">Hello World</Button>

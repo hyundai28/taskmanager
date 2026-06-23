@@ -6,6 +6,7 @@ import { loginSchema, registerSchema } from "../schemas";
 import { createAdminClient } from "@/lib/appwrite";
 import { ID } from "node-appwrite";
 import { sessionMiddleware } from "@/lib/session-middleware";
+import { AUTH_COOKIE } from "../constants";
 
 const app = new Hono()
   .get("/current", sessionMiddleware, (c) => {
@@ -15,7 +16,6 @@ const app = new Hono()
   })
   .post("/login", zValidator("json", loginSchema), async (c) => {
     const { email, password } = c.req.valid("json");
-    console.log("aqui")
 
     const { account } = await createAdminClient();
     const session = await account.createEmailPasswordSession({
@@ -23,7 +23,7 @@ const app = new Hono()
       password,
     });
 
-    setCookie(c, "tskmng-session", session.secret, {
+    setCookie(c, AUTH_COOKIE, session.secret, {
       path: "/",
       httpOnly: true,
       secure: true,
@@ -49,7 +49,7 @@ const app = new Hono()
       password: password,
     });
 
-    setCookie(c, "tskmng-session", session.secret, {
+    setCookie(c, AUTH_COOKIE, session.secret, {
       path: "/",
       httpOnly: true,
       secure: true,
@@ -61,7 +61,7 @@ const app = new Hono()
   })
   .post("/logout", sessionMiddleware, async (c) => {
     const account = c.get("account");
-    deleteCookie(c, "tskmng-session");
+    deleteCookie(c, AUTH_COOKIE);
     await account.deleteSession({ sessionId: "current" });
     return c.json({ success: true });
   });

@@ -1,12 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { useCurrent } from "@/features/auth/api/use-current";
+import { getCurrent } from "@/features/auth/actions";
+import { UserButton } from "@/features/auth/components/user-button";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  //const { data } = useCurrent();
+export default async function Home() {
+  const currentUser = await getCurrent();
+
+  if (!currentUser) redirect("/sign-in");
+
   return (
     <div>
-      <Button variant="primary">Hello World</Button>
-      <p className="text-lg text-muted-foreground">Welcome to the homepage!</p>
+      <UserButton />
     </div>
   );
 }
